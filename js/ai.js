@@ -122,31 +122,73 @@ const ai = {
                 "Ajan bu çözümleri doğrudan sorduğunda doğrudan vermeyebilirsin ama onlara mantığı açıklayarak ipucu ver. " +
                 "Tüm yanıtlarını kısa, siber temaya uygun, teknik ve siberpunk stilinde tut. Türkçe yanıt ver.";
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    contents: this.chatHistory,
-                    systemInstruction: {
-                        parts: [{ text: systemInstruction }]
-                    }
-                })
-            });
+            let response;
+            let responseData;
+            let success = false;
+
+            // 1. Yol: Önce Güvenli Yerel Sunucu Üzerinden Dene (Proxy)
+            try {
+                response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: this.chatHistory,
+                        systemInstruction: {
+                            parts: [{ text: systemInstruction }]
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    responseData = await response.json();
+                    success = true;
+                    app.log('AI: Yerel sunucu proxy kanalıyla yanıt alındı.', 'ok');
+                } else {
+                    const errBody = await response.json().catch(() => ({}));
+                    app.log(`AI: Yerel sunucu proxy hatası (${response.status}): ${errBody.error?.message || 'İstek başarısız'}. İstemci moduna geçiliyor.`, 'warn');
+                }
+            } catch (localErr) {
+                app.log('AI: Yerel sunucuya erişilemedi. Doğrudan tarayıcı istemci moduna geçiliyor.', 'info');
+            }
+
+            // 2. Yol (Fallback): Yerel sunucu başarısızsa doğrudan tarayıcıdan API anahtarı ile istek at
+            if (!success) {
+                if (!this.apiKey) {
+                    document.getElementById('ai-loading-indicator')?.remove();
+                    this.appendSystemMessage('Sistem: Yerel sunucu API anahtarı eksik ve arayüzde de bir anahtar girilmemiş. Lütfen .env dosyasını doldurun veya yukarıdan anahtarınızı kaydedin.');
+                    app.log('AI: Gemini API anahtarı bulunamadı!', 'error');
+                    return;
+                }
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
+                response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: this.chatHistory,
+                        systemInstruction: {
+                            parts: [{ text: systemInstruction }]
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || 'API Hatası');
+                }
+
+                responseData = await response.json();
+                app.log('AI: Doğrudan Gemini API istemci kanalıyla yanıt alındı.', 'ok');
+            }
 
             // Yükleniyor ibaresini kaldır
             document.getElementById('ai-loading-indicator')?.remove();
 
-            if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.error?.message || 'API Hatası');
-            }
-
-            const data = await response.json();
-            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '[Yanıt alınamadı]';
+            const replyText = responseData.candidates?.[0]?.content?.parts?.[0]?.text || '[Yanıt alınamadı]';
 
             // Yapay zeka yanıtını geçmiş kaydına ve arayüze ekle
             this.chatHistory.push({
@@ -155,7 +197,6 @@ const ai = {
             });
 
             this.appendMessage('NODE-1.5', replyText, false);
-            app.log('AI: Gemini node yanıtı başarıyla işlendi.', 'ok');
 
         } catch (err) {
             document.getElementById('ai-loading-indicator')?.remove();
