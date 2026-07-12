@@ -122,7 +122,7 @@ const ai = {
                 "Ajan bu çözümleri doğrudan sorduğunda doğrudan vermeyebilirsin ama onlara mantığı açıklayarak ipucu ver. " +
                 "Tüm yanıtlarını kısa, siber temaya uygun, teknik ve siberpunk stilinde tut. Türkçe yanıt ver.";
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
             
             const response = await fetch(url, {
                 method: 'POST',
