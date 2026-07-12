@@ -197,16 +197,3 @@ Pull request'ler memnuniyetle karşılanır. Büyük değişiklikler için önce
 
 Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 
----
-
-<div align="center">
-
-**[ SHADOW_PROTOCOL // SECURE NODE ACTIVE ]**
-
-*"Gizlilik bir hak değil, bir sanattır."*
-
-<br>
-
-Made with 🖤 by [mehmeteminyilmaz](https://github.com/mehmeteminyilmaz)
-
-</div>
