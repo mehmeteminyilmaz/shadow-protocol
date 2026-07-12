@@ -78,6 +78,8 @@ app.post('/api/chat', (req, res) => {
 
     proxyReq.write(postData);
     proxyReq.end();
+});
+
 // CPU Yükünü Hesaplama Yardımcı Fonksiyonları
 function getCPUInfo() {
     const cpus = os.cpus();
