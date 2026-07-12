@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShadowProtocol - Gelişmiş Steganografi ve Şifreleme İstasyonu. Görsel ve ses dosyalarına gizli mesajlar göm, şifreleme algoritmalarını görsel olarak keşfet.">
+    <title>ShadowProtocol // Cyber Steganography & Cipher Station</title>
+
+    <!-- Google Fonts: Orbitron & Share Tech Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Ana Stil Dosyası -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Retro Tarama Çizgisi Efekti (Scanlines) -->
+    <div class="scanlines"></div>
+
+    <!-- Ana Siber Kapsayıcı -->
+    <div class="cyber-container">
+
+        <!-- ===== HEADER ===== -->
+        <header class="cyber-header">
+            <div class="header-logo">
+                <h1 class="glitch-text" data-text="SHADOW_PROTOCOL">SHADOW_PROTOCOL</h1>
+                <span class="status-badge pulse">
+                    <i class="fa-solid fa-signal"></i> SECURE NODE
+                </span>
+            </div>
+            <div class="header-info">
+                <div class="info-block">
+                    <span class="info-label">KOORDİNAT</span>
+                    <span class="info-value text-cyan">41.0082° K, 28.9784° D</span>
+                </div>
+                <div class="info-block">
+                    <span class="info-label">ŞİFRELEME</span>
+                    <span class="info-value text-green">AES-256 + LSB</span>
+                </div>
+                <div class="info-block">
+                    <span class="info-label">SİSTEM SAATİ</span>
+                    <span id="system-time" class="info-value text-cyan">00:00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== ANA ÇALIŞMA ALANI ===== -->
+        <div class="workspace-layout">
+
+            <!-- Sol Yan Menü -->
+            <nav class="cyber-nav" role="navigation" aria-label="Ana Navigasyon">
+                <button id="nav-control-deck" class="nav-btn active" data-tab="control-deck" aria-selected="true">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>KONTROL MERKEZİ</span>
+                </button>
+                <button id="nav-stego-lab" class="nav-btn" data-tab="stego-lab" aria-selected="false">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>STEGO LAB</span>
+                </button>
+                <button id="nav-cipher-engine" class="nav-btn" data-tab="cipher-engine" aria-selected="false">
+                    <i class="fa-solid fa-key"></i>
+                    <span>ŞİFRE MOTORU</span>
+                </button>
+                <button id="nav-mission-control" class="nav-btn" data-tab="mission-control" aria-selected="false">
+                    <i class="fa-solid fa-user-secret"></i>
+                    <span>GÖREV ODASI</span>
+                    <span class="badge" id="mission-badge">3</span>
+                </button>
+            </nav>
+
+            <!-- Ana İçerik -->
+            <main class="cyber-main" role="main">
+
+                <!-- TAB 1: Kontrol Merkezi -->
+                <section id="control-deck" class="tab-section active" aria-label="Kontrol Merkezi">
+                    <!-- İçerik js/app.js tarafından yüklenir -->
+                    <div class="grid-2col">
+                        <div class="glass-card col-span-2">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-chart-line text-cyan"></i> SİSTEM DURUMU</h2>
+                            </div>
+                            <div class="card-body system-stats-wrapper">
+                                <div class="gauge-group">
+                                    <div class="gauge-item">
+                                        <canvas id="cpu-gauge" width="130" height="130"></canvas>
+                                        <span class="gauge-label">CPU YÜKÜ</span>
+                                        <span class="gauge-value text-cyan" id="cpu-val">0%</span>
+                                    </div>
+                                    <div class="gauge-item">
+                                        <canvas id="ram-gauge" width="130" height="130"></canvas>
+                                        <span class="gauge-label">RAM KULLANIMI</span>
+                                        <span class="gauge-value text-purple" id="ram-val">0%</span>
+                                    </div>
+                                </div>
+                                <div class="system-info-list">
+                                    <div class="info-row">
+                                        <i class="fa-solid fa-microchip text-cyan"></i>
+                                        <span>İşlemci: Core-Agent v3.5</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <i class="fa-solid fa-shield-halved text-green"></i>
+                                        <span>Güvenlik Duvarı: <strong class="text-green">AKTİF</strong></span>
+                                    </div>
+                                    <div class="info-row">
+                                        <i class="fa-solid fa-network-wired text-purple"></i>
+                                        <span>Uzak Sunucu: localhost:3000</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <i class="fa-solid fa-wave-square text-cyan"></i>
+                                        <span>Web Audio API: <strong class="text-green">ÇEVRIMIÇI</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aktif Görevler -->
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-folder-open text-purple"></i> AKTİF GÖREVLER</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="mission-brief-card" onclick="app.switchTab('mission-control')">
+                                    <div class="brief-title">GÖREV 1: SES SIZINTISI</div>
+                                    <p class="brief-desc">Ele geçirilen ses dosyasına gizlenmiş mesajı çöz.</p>
+                                    <span class="tag tag-cyan">BAŞLANGIÇ</span>
+                                </div>
+                                <div class="mission-brief-card locked">
+                                    <div class="brief-title">GÖREV 2: FİRARİ AJAN</div>
+                                    <p class="brief-desc">Fotoğraf piksellerine gömülen koordinatları tespit et.</p>
+                                    <span class="tag tag-purple">KİLİTLİ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hızlı Erişim -->
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-bolt text-green"></i> HIZLI ERİŞİM</h2>
+                            </div>
+                            <div class="card-body flex-col gap-1">
+                                <button class="btn btn-cyan" onclick="app.switchTab('stego-lab')">
+                                    <i class="fa-solid fa-file-image"></i> Görsel Steganografi
+                                </button>
+                                <button class="btn btn-purple" onclick="app.switchTab('stego-lab')">
+                                    <i class="fa-solid fa-headphones"></i> Ses Steganografi
+                                </button>
+                                <button class="btn btn-green" onclick="app.switchTab('cipher-engine')">
+                                    <i class="fa-solid fa-rotate"></i> Şifreleme Motorları
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: Stego Lab -->
+                <section id="stego-lab" class="tab-section" aria-label="Steganografi Laboratuvarı">
+                    <div class="subtab-nav">
+                        <button class="subtab-btn active" data-subtab="image-stego">
+                            <i class="fa-solid fa-image"></i> GÖRSEL STEGANOGRAFİ
+                        </button>
+                        <button class="subtab-btn" data-subtab="audio-stego">
+                            <i class="fa-solid fa-headphones"></i> SES STEGANOGRAFİSİ
+                        </button>
+                    </div>
+
+                    <!-- Görsel Steganografi -->
+                    <div id="image-stego" class="subtab-section active">
+                        <div class="grid-2col">
+                            <!-- Encode Paneli -->
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-lock text-cyan"></i> VERİ GİZLE (ENCODE)</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div id="img-upload-zone" class="upload-zone">
+                                        <i class="fa-solid fa-cloud-arrow-up text-cyan"></i>
+                                        <p>PNG / BMP Görsel Yükle</p>
+                                        <span class="upload-hint">Tıkla veya sürükle bırak</span>
+                                        <input type="file" id="stego-img-input" accept="image/png,image/bmp" hidden>
+                                    </div>
+                                    <div id="img-preview-wrap" class="img-preview-wrap hidden">
+                                        <img id="source-img-preview" alt="Kaynak Görsel Önizlemesi">
+                                        <span id="img-dims" class="img-dims text-cyan">0 x 0 px</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="img-secret-msg">Gizli Mesaj:</label>
+                                        <textarea id="img-secret-msg" rows="3" placeholder="Görsel içine gizlenecek mesajı yaz..."></textarea>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="img-enc-key">Şifreleme Anahtarı (Opsiyonel):</label>
+                                        <input type="password" id="img-enc-key" placeholder="AES-256 anahtarı gir...">
+                                    </div>
+                                    <button id="btn-img-encode" class="btn btn-cyan">
+                                        <i class="fa-solid fa-lock"></i> Mesajı Görsele Göm
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Decode Paneli -->
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-unlock-keyhole text-green"></i> VERİ ÇÖZ (DECODE)</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div id="img-decode-zone" class="upload-zone">
+                                        <i class="fa-solid fa-eye text-green"></i>
+                                        <p>Şifreli Görsel Yükle</p>
+                                        <span class="upload-hint">Tıkla veya sürükle bırak</span>
+                                        <input type="file" id="stego-img-decode-input" accept="image/png,image/bmp" hidden>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="img-dec-key">Şifre Çözme Anahtarı:</label>
+                                        <input type="password" id="img-dec-key" placeholder="Şifre çözme anahtarı gir...">
+                                    </div>
+                                    <button id="btn-img-decode" class="btn btn-green">
+                                        <i class="fa-solid fa-key"></i> Mesajı Çöz
+                                    </button>
+                                    <div id="img-decode-result" class="terminal-box hidden">
+                                        <div class="terminal-title-bar">ÇÖZÜLEN_VERİ.txt</div>
+                                        <div id="img-decoded-text" class="terminal-content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Isıl Fark Merceği -->
+                        <div class="glass-card mt-1" id="thermal-lens-card">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-magnifying-glass-chart text-cyan"></i> ISIL FARK MERCEĞİ (THERMAL DIFF LENS)</h2>
+                            </div>
+                            <div class="card-body flex-col align-center gap-1">
+                                <p class="text-muted">Kaydırıcıyı sürükleyerek orijinal ve şifreli görsel arasındaki piksel farklarını kızılötesi modda incele.</p>
+                                <div class="lens-wrapper">
+                                    <canvas id="lens-canvas"></canvas>
+                                    <div id="lens-handle"></div>
+                                </div>
+                                <div class="flex-row gap-2 align-center">
+                                    <button id="btn-diff-toggle" class="btn btn-sm btn-purple">
+                                        <i class="fa-solid fa-circle-half-stroke"></i> Modu Değiştir
+                                    </button>
+                                    <span id="diff-pixel-info" class="text-green mono-text">Farklı piksel: 0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ses Steganografisi -->
+                    <div id="audio-stego" class="subtab-section">
+                        <div class="grid-2col">
+                            <!-- Audio Encode -->
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-microphone-lines text-purple"></i> SES ENCODE</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div id="audio-upload-zone" class="upload-zone">
+                                        <i class="fa-solid fa-file-audio text-purple"></i>
+                                        <p>WAV Ses Dosyası Yükle</p>
+                                        <span class="upload-hint">Sadece .wav formatı</span>
+                                        <input type="file" id="stego-audio-input" accept="audio/wav" hidden>
+                                    </div>
+                                    <div id="audio-player-wrap" class="hidden">
+                                        <p id="audio-file-name" class="text-cyan mono-text"></p>
+                                        <audio id="source-audio" controls></audio>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="audio-secret-msg">Gizli Mesaj:</label>
+                                        <textarea id="audio-secret-msg" rows="3" placeholder="Sese gizlenecek mesajı yaz..."></textarea>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="audio-enc-key">Şifreleme Anahtarı:</label>
+                                        <input type="password" id="audio-enc-key" placeholder="Anahtarı gir...">
+                                    </div>
+                                    <button id="btn-audio-encode" class="btn btn-purple">
+                                        <i class="fa-solid fa-lock"></i> Sese Gizle & İndir
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Audio Decode -->
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-headphones text-green"></i> SES DECODE</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div id="audio-decode-zone" class="upload-zone">
+                                        <i class="fa-solid fa-circle-play text-green"></i>
+                                        <p>Şifreli Ses Dosyası Yükle</p>
+                                        <span class="upload-hint">Sadece .wav formatı</span>
+                                        <input type="file" id="stego-audio-decode-input" accept="audio/wav" hidden>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="audio-dec-key">Şifre Çözme Anahtarı:</label>
+                                        <input type="password" id="audio-dec-key" placeholder="Anahtarı gir...">
+                                    </div>
+                                    <button id="btn-audio-decode" class="btn btn-green">
+                                        <i class="fa-solid fa-key"></i> Sesten Mesajı Çöz
+                                    </button>
+                                    <div id="audio-decode-result" class="terminal-box hidden">
+                                        <div class="terminal-title-bar">ŞİFRE_ÇÖZÜLDÜ.txt</div>
+                                        <div id="audio-decoded-text" class="terminal-content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Spektrogram -->
+                        <div class="glass-card mt-1">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-wave-square text-purple"></i> GERÇEK ZAMANLI FREKANS SPEKTROGRAMI (RADAR TARAMASI)</h2>
+                            </div>
+                            <div class="card-body flex-col align-center gap-1">
+                                <canvas id="spectrogram-canvas" width="800" height="220"></canvas>
+                                <span class="text-purple mono-text">
+                                    <i class="fa-solid fa-circle-nodes pulse"></i> Web Audio Analizörü: AKTİF
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: Şifre Motoru -->
+                <section id="cipher-engine" class="tab-section" aria-label="Şifreleme Motoru">
+                    <div class="subtab-nav">
+                        <button class="subtab-btn active" data-subtab="caesar">CAESAR</button>
+                        <button class="subtab-btn" data-subtab="vigenere">VİGENÈRE</button>
+                        <button class="subtab-btn" data-subtab="xor">XOR BINARY</button>
+                    </div>
+
+                    <!-- Caesar -->
+                    <div id="caesar" class="subtab-section active">
+                        <div class="grid-2col">
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-arrows-spin text-cyan"></i> CAESAR KONFİGÜRASYONU</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div class="input-group">
+                                        <label for="caesar-input">Metin:</label>
+                                        <textarea id="caesar-input" rows="3" placeholder="Şifrelenecek veya çözülecek metni gir..."></textarea>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="caesar-shift">Kaydırma (Shift): <strong id="caesar-shift-display" class="text-cyan">3</strong></label>
+                                        <input type="range" id="caesar-shift" min="1" max="25" value="3">
+                                    </div>
+                                    <div class="flex-row gap-1">
+                                        <button id="btn-caesar-enc" class="btn btn-cyan flex-1">ŞİFRELE</button>
+                                        <button id="btn-caesar-dec" class="btn btn-green flex-1">ÇÖZ</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass-card flex-col align-center justify-center">
+                                <div class="card-header w-full">
+                                    <h2><i class="fa-solid fa-circle-dot text-cyan"></i> KAYDIRMA TEKERLEĞİ</h2>
+                                </div>
+                                <div class="card-body flex-col align-center">
+                                    <div class="caesar-wheel-wrap">
+                                        <div id="caesar-wheel-outer" class="caesar-wheel outer"></div>
+                                        <div id="caesar-wheel-inner" class="caesar-wheel inner"></div>
+                                    </div>
+                                    <p id="caesar-mapping" class="text-cyan mono-text mt-1">A ➔ D, B ➔ E, C ➔ F</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vigenere -->
+                    <div id="vigenere" class="subtab-section">
+                        <div class="grid-2col">
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-table-cells text-purple"></i> VİGENÈRE KONFİGÜRASYONU</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div class="input-group">
+                                        <label for="vigenere-input">Metin:</label>
+                                        <textarea id="vigenere-input" rows="3" placeholder="Şifrelenecek veya çözülecek metni gir..."></textarea>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="vigenere-key">Anahtar Kelime:</label>
+                                        <input type="text" id="vigenere-key" placeholder="örn: AJAN">
+                                    </div>
+                                    <div class="flex-row gap-1">
+                                        <button id="btn-vigenere-enc" class="btn btn-purple flex-1">ŞİFRELE</button>
+                                        <button id="btn-vigenere-dec" class="btn btn-green flex-1">ÇÖZ</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-diagram-project text-purple"></i> DİNAMİK MATRİS TABLOSU</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <p class="text-muted">Her harf, anahtar harfinin satırı ve metin harfinin sütununun kesişiminden şifrelenir.</p>
+                                    <div id="vigenere-matrix" class="vigenere-matrix-wrap"></div>
+                                    <p id="vigenere-step-info" class="text-purple mono-text"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- XOR -->
+                    <div id="xor" class="subtab-section">
+                        <div class="grid-2col">
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-code-compare text-green"></i> XOR KONFİGÜRASYONU</h2>
+                                </div>
+                                <div class="card-body flex-col gap-1">
+                                    <div class="input-group">
+                                        <label for="xor-input">Metin:</label>
+                                        <textarea id="xor-input" rows="3" placeholder="Şifrelenecek veya çözülecek metni gir..."></textarea>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="xor-key">XOR Anahtarı:</label>
+                                        <input type="text" id="xor-key" placeholder="örn: X veya 42">
+                                    </div>
+                                    <button id="btn-xor-process" class="btn btn-green">
+                                        İŞLE (XOR Çift Yönlüdür)
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="glass-card">
+                                <div class="card-header">
+                                    <h2><i class="fa-solid fa-binary text-green"></i> BİT OPERASYON AKIŞI</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div id="xor-flow" class="xor-flow-panel">
+                                        <div class="xor-flow-header">
+                                            <span>Karakter</span>
+                                            <span>ASCII</span>
+                                            <span>Binary (8-bit)</span>
+                                        </div>
+                                        <div id="xor-flow-body">
+                                            <p class="text-muted text-center mono-text">İşlemek için veri girin.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: Görev Odası -->
+                <section id="mission-control" class="tab-section" aria-label="Görev Odası">
+                    <div class="mission-layout">
+
+                        <!-- Görev Listesi -->
+                        <div class="glass-card mission-sidebar">
+                            <div class="card-header">
+                                <h2><i class="fa-solid fa-list-check text-cyan"></i> GÖREVLER</h2>
+                            </div>
+                            <div class="card-body no-pad">
+                                <div class="mission-list-item active" data-mission="1">
+                                    <i class="fa-solid fa-unlock text-cyan"></i>
+                                    <span>GÖREV 1: The Leak</span>
+                                </div>
+                                <div class="mission-list-item locked" data-mission="2">
+                                    <i class="fa-solid fa-lock text-muted"></i>
+                                    <span>GÖREV 2: Thermal Intel</span>
+                                </div>
+                                <div class="mission-list-item locked" data-mission="3">
+                                    <i class="fa-solid fa-lock text-muted"></i>
+                                    <span>GÖREV 3: Final Key</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aktif Görev Detayı -->
+                        <div class="glass-card mission-detail">
+                            <div class="card-header">
+                                <h2>
+                                    <i class="fa-solid fa-user-secret text-purple"></i>
+                                    GÖREV DOSYASI: <span id="active-mission-name">GÖREV 1</span>
+                                </h2>
+                            </div>
+                            <div class="card-body flex-col gap-1">
+                                <p id="active-mission-desc" class="text-muted mission-brief">
+                                    Ajan, bir bilgi sızdırıldı. Ele geçirdiğimiz ses dosyasını Stego Lab'da analiz et ve gizli parolayı bul.
+                                </p>
+                                <div id="mission-playground" class="mission-playground"></div>
+                                <div class="input-group mt-1">
+                                    <label for="mission-answer">Bulduğun Gizli Parola / Yanıt:</label>
+                                    <div class="input-with-btn">
+                                        <input type="text" id="mission-answer" placeholder="Cevabı buraya yaz...">
+                                        <button id="btn-mission-submit" class="btn btn-cyan">DOĞRULA</button>
+                                    </div>
+                                </div>
+                                <p id="mission-feedback" class="mission-feedback mono-text"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- ===== TERMINAL FOOTER ===== -->
+        <footer class="cyber-footer" role="contentinfo">
+            <div class="footer-bar">
+                <span><i class="fa-solid fa-angle-right text-green"></i> AGENT_LOGS.log</span>
+                <span class="text-muted">SİSTEM DURUMU: NORMAL</span>
+            </div>
+            <div id="terminal-logs" class="terminal-logs-body" aria-live="polite" aria-label="Sistem Logları">
+                <!-- Loglar js/app.js tarafından dinamik olarak oluşturulur -->
+            </div>
+        </footer>
+
+    </div><!-- /cyber-container -->
+
+    <!-- CryptoJS (AES şifreleme için) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <!-- Uygulama Modülleri (sıra önemli) -->
+    <script src="js/cipher.js"></script>
+    <script src="js/stego.js"></script>
+    <script src="js/missions.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
