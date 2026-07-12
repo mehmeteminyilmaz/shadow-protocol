@@ -190,6 +190,23 @@ const stego = {
 
         app.log('Stego: Mesaj görsele gizlendi ve indirme başlatıldı.', 'ok');
 
+        // ----- ÖNİZLEME: encode çıktısını sayfaya göm -----
+        let previewWrap = document.getElementById('encode-result-preview');
+        if (!previewWrap) {
+            previewWrap = document.createElement('div');
+            previewWrap.id = 'encode-result-preview';
+            previewWrap.style.cssText = 'margin-top:0.75rem; text-align:center;';
+            const btnEncode = document.getElementById('btn-img-encode');
+            btnEncode?.parentNode?.insertBefore(previewWrap, btnEncode.nextSibling);
+        }
+        previewWrap.innerHTML = `
+            <p class="text-green mono-text" style="margin-bottom:0.4rem;font-size:0.82rem;">
+                <i class="fa-solid fa-check-circle"></i> Şifreli Görsel Önizlemesi
+            </p>
+            <img src="${dataURL}" alt="Encode edilmiş görsel" style="max-width:100%;border:1px solid var(--cyan);border-radius:6px;">
+            <p class="text-muted" style="font-size:0.78rem;margin-top:0.3rem;">shadow_encoded.png indirildi.</p>
+        `;
+
         // Isıl karşılaştırma için şifreli görseli kaydet
         const encImg = new Image();
         encImg.src = dataURL;
@@ -268,7 +285,23 @@ const stego = {
         const handle = document.getElementById('lens-handle');
         const btnToggle = document.getElementById('btn-diff-toggle');
 
-        if (!canvas || !this.sourceImage || !this.encodedImage) return;
+        if (!canvas) return;
+
+        // Kaynak görsel yoksa bilgi mesajı göster
+        if (!this.sourceImage) {
+            if (card) {
+                card.classList.remove('hidden');
+                const wrap = card.querySelector('.lens-wrapper');
+                if (wrap) wrap.innerHTML = '<p class="text-muted mono-text" style="padding:1rem;"><i class="fa-solid fa-triangle-exclamation text-warn"></i> Karşılaştırma için Encode sekmesinde bir kaynak görsel yüklemeniz gerekiyor.</p>';
+            }
+            return;
+        }
+
+        if (!this.encodedImage) {
+            // Sadece kaynak görsel var — encode bekleniyor
+            if (card) card.classList.remove('hidden');
+            return;
+        }
 
         // Mercek panelini görünür yap
         card.classList.remove('hidden');
@@ -605,8 +638,18 @@ const stego = {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.analyser = this.audioCtx.createAnalyser();
             this.analyser.fftSize = 512;
+        }
 
-            // Audio element bağlantısı
+        // AudioContext kapatıldıysa yenisini oluştur
+        if (this.audioCtx.state === 'closed') {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.analyser = this.audioCtx.createAnalyser();
+            this.analyser.fftSize = 512;
+            this.sourceNode = null; // bağlantıyı sıfırla
+        }
+
+        // sourceNode daha önce oluşturulmadıysa bağla (InvalidStateError önlemi)
+        if (!this.sourceNode) {
             this.sourceNode = this.audioCtx.createMediaElementSource(audioElement);
             this.sourceNode.connect(this.analyser);
             this.analyser.connect(this.audioCtx.destination);

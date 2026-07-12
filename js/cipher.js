@@ -16,6 +16,8 @@ const cipher = {
         this.initCaesar();
         this.initVigenere();
         this.initXOR();
+        // Vigenère matrisini hemen oluştur — sekmeye ilk geçişte boş görünmemesi için
+        this.buildMatrix();
     },
 
     /* ==========================================

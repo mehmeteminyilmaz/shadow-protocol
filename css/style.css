@@ -780,6 +780,21 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .tag-purple { background: var(--purple-dim); border: 1px solid var(--purple); color: var(--purple); }
 .tag-green  { background: var(--green-dim);  border: 1px solid var(--green);  color: var(--green); }
 
+/* Tamamlanan görev kartı */
+.mission-brief-card.done {
+    border-color: rgba(57, 255, 20, 0.4);
+    opacity: 0.75;
+}
+
+/* Sidebar tamamlanan öğe */
+.mission-list-item.completed {
+    background: rgba(57, 255, 20, 0.06);
+    border-left: 3px solid var(--green);
+}
+
+/* Uyarı rengi */
+.text-warn { color: #f7b731; }
+
 
 /* =====================
    16. ISIL FARK MERCEĞİ (Lens)

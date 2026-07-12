@@ -19,6 +19,8 @@ const app = {
         this.initSubTabNavigation();
         this.initTerminalLog();
         this.initDashboardGauges();
+        this.initDragDrop();
+        this.initCopyButtons();
 
         // Açılış log mesajları
         this.log('SHADOW_PROTOCOL v1.0 başlatılıyor...', 'info');
@@ -275,6 +277,99 @@ const app = {
         ctx.setLineDash([2, 6]);
         ctx.stroke();
         ctx.setLineDash([]);
+    },
+
+    /* ------------------------------------------
+       SÜRÜKLE BİRAK (DRAG & DROP) DESTECİ
+    ------------------------------------------ */
+    initDragDrop() {
+        document.querySelectorAll('.upload-zone').forEach(zone => {
+            // Fare üzerindeyken efekt
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.style.borderColor = 'var(--cyan)';
+                zone.style.background = 'rgba(0,240,255,0.07)';
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.style.borderColor = '';
+                zone.style.background = '';
+            });
+
+            // Bırakma: gizli input'un change event'ini tetikle
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.style.borderColor = '';
+                zone.style.background = '';
+
+                const input = zone.querySelector('input[type="file"]');
+                if (!input || !e.dataTransfer.files.length) return;
+
+                // DataTransfer dosyalarını input'a aktar
+                const dt = new DataTransfer();
+                dt.items.add(e.dataTransfer.files[0]);
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+
+                this.log(`Dosya sürüklenerek yüklendi: ${e.dataTransfer.files[0].name}`, 'info');
+            });
+        });
+    },
+
+    /* ------------------------------------------
+       KOPYALAMA BUTONLARI
+    ------------------------------------------ */
+    initCopyButtons() {
+        // terminal-box içindeki tüm başlık çubuklarına kopyalama butonu ekle
+        document.querySelectorAll('.terminal-box').forEach(box => {
+            const titleBar = box.querySelector('.terminal-title-bar');
+            const content = box.querySelector('.terminal-content');
+            if (!titleBar || !content) return;
+
+            // Zaten var mı kontrol et
+            if (titleBar.querySelector('.btn-copy-result')) return;
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn-copy-result';
+            copyBtn.title = 'Kopyala';
+            copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+            copyBtn.style.cssText = `
+                float: right;
+                background: none;
+                border: 1px solid var(--border);
+                color: var(--cyan);
+                cursor: pointer;
+                padding: 1px 6px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                margin-top: -2px;
+                transition: background 0.2s;
+            `;
+
+            copyBtn.addEventListener('click', () => {
+                const text = content.textContent.trim();
+                if (!text) return;
+                navigator.clipboard.writeText(text).then(() => {
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    copyBtn.style.color = 'var(--green)';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+                        copyBtn.style.color = 'var(--cyan)';
+                    }, 1500);
+                    this.log('Sonuç panoya kopyalandı.', 'ok');
+                }).catch(() => {
+                    // Pano API’sına erişim yoksa seçim yöntemine düş
+                    const range = document.createRange();
+                    range.selectNodeContents(content);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    this.log('Metin seçildi — Ctrl+C ile kopyalayın.', 'warn');
+                });
+            });
+
+            titleBar.appendChild(copyBtn);
+        });
     },
 
     /* ------------------------------------------

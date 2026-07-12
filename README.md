@@ -90,7 +90,7 @@ GÖREV 3 → Final Key      → İpuçlarını birleştirip son şifreyi kır
 ## 🛠️ Kullanılan Teknolojiler
 
 ```
-📦 Sıfır Framework — Tamamen Saf Web Teknolojileri
+📦 Minimal Bağımlılık — Saf Web Teknolojileri + Hafif Backend
 ```
 
 | Teknoloji | Kullanım Amacı |
@@ -98,17 +98,17 @@ GÖREV 3 → Final Key      → İpuçlarını birleştirip son şifreyi kır
 | **HTML5** | Semantik SPA yapısı, erişilebilirlik (ARIA) |
 | **CSS3** | Tasarım sistemi, animasyonlar, glassmorphism |
 | **Vanilla JavaScript (ES6+)** | Uygulama mantığı ve durum yönetimi |
+| **Node.js + Express** | Sistem istatistikleri API'si ve Gemini AI proxy |
 | **Canvas API** | Piksel manipülasyonu, gauge grafikleri, thermal lens |
 | **Web Audio API** | Ses analizi ve gerçek zamanlı spektrogram |
 | **CryptoJS** | AES-256 mesaj ön şifreleme (CDN) |
+| **Gemini API** | AI asistan — kriptografi ve şifre ipuçları |
 | **FontAwesome** | İkon seti (CDN) |
 | **Google Fonts** | Orbitron & Share Tech Mono yazı tipleri |
 
 ---
 
 ## 🚀 Kurulum
-
-Herhangi bir kurulum veya bağımlılık gerektirmez. Sadece tarayıcın yeterli!
 
 ```bash
 # 1. Repoyu klonla
@@ -117,12 +117,19 @@ git clone https://github.com/mehmeteminyilmaz/shadow-protocol.git
 # 2. Proje klasörüne gir
 cd shadow-protocol
 
-# 3. index.html dosyasını tarayıcında aç
-# (ya da bir local server başlat)
-npx serve .
+# 3. Bağımlılıkları yükle
+npm install
+
+# 4. .env dosyasını oluştur ve Gemini API anahtarını ekle
+cp .env.example .env
+# .env dosyasını düzenleyerek GEMINI_API_KEY değerini gir
+
+# 5. Sunucuyu başlat
+npm start
+# → http://localhost:3000 adresinde çalışır
 ```
 
-> ⚠️ **Not:** Canvas API ve dosya okuma işlemleri için `file://` protokolü yerine bir local HTTP sunucusu önerilir.
+> ⚠️ **Not:** Gemini AI asistanı için geçerli bir API anahtarı gerekir. [Google AI Studio](https://aistudio.google.com/)'dan ücretsiz alabilirsin.
 
 ---
 
@@ -159,16 +166,20 @@ XOR işlemi çift yönlüdür: aynı anahtar ile tekrar uygulandığında orijin
 shadow-protocol/
 │
 ├── index.html          # SPA iskelet ve tüm HTML yapısı
+├── server.js           # Express sunucusu — sistem istatistikleri + Gemini proxy
+├── .env                # API anahtarları (git'e gönderilmez)
 │
 ├── css/
 │   └── style.css       # Siberpunk tasarım sistemi (CSS değişkenleri, animasyonlar)
 │
 ├── js/
-│   ├── app.js          # Sekme yönetimi, terminal log, dashboard gauge'lar
+│   ├── app.js          # Sekme yönetimi, terminal log, drag-drop, kopyalama
 │   ├── cipher.js       # Caesar, Vigenère, XOR algoritmaları ve görselleştiriciler
 │   ├── stego.js        # Görsel/ses steganografi ve thermal diff lens
-│   └── missions.js     # Görev senaryoları ve ilerleme takibi
+│   ├── missions.js     # Görev senaryoları, localStorage ilerleme kaydı
+│   └── ai.js           # Gemini AI asistan istemcisi
 │
+├── favicon.svg         # Siberpunk hexagon favicon
 └── README.md
 ```
 
@@ -178,12 +189,18 @@ shadow-protocol/
 
 - [x] HTML5 SPA iskeleti ve semantik yapı
 - [x] Siberpunk CSS tasarım sistemi ve animasyonlar
-- [ ] SPA sekme yönetimi ve terminal log sistemi (`app.js`)
-- [ ] Caesar, Vigenère ve XOR şifreleme motorları (`cipher.js`)
-- [ ] Görsel steganografi ve Thermal Diff Lens (`stego.js`)
-- [ ] Ses steganografisi ve Spektrogram (`stego.js`)
-- [ ] Görev senaryoları ve ilerleme sistemi (`missions.js`)
-- [ ] GitHub Pages ile canlı yayın
+- [x] SPA sekme yönetimi ve terminal log sistemi (`app.js`)
+- [x] Drag & Drop dosya yükleme desteği
+- [x] Tek tıkla kopyalama butonu (tüm çıktılar)
+- [x] Caesar, Vigenère ve XOR şifreleme motorları (`cipher.js`)
+- [x] Görsel steganografi ve Thermal Diff Lens (`stego.js`)
+- [x] Ses steganografisi ve Spektrogram (`stego.js`)
+- [x] Görev senaryoları ve localStorage ilerleme sistemi (`missions.js`)
+- [x] Gemini AI Asistan entegrasyonu (`ai.js` + `server.js`)
+- [x] Node.js backend — gerçek CPU/RAM istatistikleri
+- [ ] GitHub Pages ile canlı yayın (backend gereksiz sürüm)
+- [ ] Ek görev senaryoları (GÖREV 4+)
+- [ ] Çoklu dil desteği (EN/TR)
 
 ---
 

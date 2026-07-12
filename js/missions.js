@@ -6,7 +6,10 @@
 
 const missions = {
     currentMission: 1,
-    
+
+    // Tamamlanan görevler seti (localStorage ile yüklenir)
+    completed: new Set(),
+
     // Görev parametreleri
     answers: {
         1: 'AGENT_PASSCODE_777',
@@ -18,15 +21,25 @@ const missions = {
        BAŞLATICI
     ------------------------------------------ */
     init() {
+        // localStorage'dan tamamlanan görevleri yükle
+        this._loadProgress();
+
         this.renderActiveMission();
+        this.syncDashboardCards();
 
         const btnSubmit = document.getElementById('btn-submit-mission-answer');
-        const btnSubmitAlt = document.getElementById('btn-mission-submit'); // index.html ile uyumlu olması için ikisini de dinliyoruz
-        
+        const btnSubmitAlt = document.getElementById('btn-mission-submit');
+
         const checkAnswer = () => this.validateAnswer();
 
         btnSubmit?.addEventListener('click', checkAnswer);
         btnSubmitAlt?.addEventListener('click', checkAnswer);
+
+        // Enter tuşu desteği
+        const answerInput = document.getElementById('mission-answer');
+        answerInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') this.validateAnswer();
+        });
 
         // Sidebar görev tıklamaları
         document.querySelectorAll('.mission-sidebar .mission-list-item').forEach(item => {
@@ -38,6 +51,101 @@ const missions = {
                 }
                 this.selectMission(missionNum);
             });
+        });
+    },
+
+    /* ------------------------------------------
+       LOCALSTORAGE KAYIT / YÜKLEMEsİ
+    ------------------------------------------ */
+    _saveProgress() {
+        try {
+            localStorage.setItem('sp_completed', JSON.stringify([...this.completed]));
+        } catch(e) {}
+    },
+
+    _loadProgress() {
+        try {
+            const raw = localStorage.getItem('sp_completed');
+            if (raw) {
+                const arr = JSON.parse(raw);
+                this.completed = new Set(arr.map(Number));
+
+                // Kilitli görevlerin kilidini sidebar'da aç
+                this.completed.forEach(num => {
+                    // Tamamlanan görevden sonraki birini de aç
+                    const nextNum = num + 1;
+                    const sidebarItem = document.querySelector(`.mission-sidebar .mission-list-item[data-mission="${nextNum}"]`);
+                    if (sidebarItem) {
+                        sidebarItem.classList.remove('locked');
+                        const icon = sidebarItem.querySelector('i');
+                        if (icon) icon.className = 'fa-solid fa-unlock text-cyan';
+                    }
+                    // Tamamlananın üzerinde ✔ işareti
+                    const doneItem = document.querySelector(`.mission-sidebar .mission-list-item[data-mission="${num}"]`);
+                    if (doneItem) {
+                        doneItem.classList.add('completed');
+                        const icon = doneItem.querySelector('i');
+                        if (icon) icon.className = 'fa-solid fa-check text-green';
+                    }
+                });
+
+                // Görev rozeti güncelle
+                this._updateBadge();
+
+                app.log(`İlerleme yüklendi: ${this.completed.size} görev tamamlandı.`, 'info');
+            }
+        } catch(e) {}
+    },
+
+    _updateBadge() {
+        const badge = document.getElementById('mission-badge');
+        if (badge) {
+            const remaining = 3 - this.completed.size;
+            badge.textContent = remaining;
+            if (remaining === 0) badge.style.display = 'none';
+        }
+    },
+
+    /* ------------------------------------------
+       DASHBOARD KARTLARI SENKRONIZASYONU
+    ------------------------------------------ */
+    syncDashboardCards() {
+        // Kontrol Merkezi'ndeki Aktif Görevler panelini tamamlanan görevlere göre güncelle
+        const briefCards = document.querySelectorAll('.mission-brief-card');
+        briefCards.forEach(card => {
+            const titleEl = card.querySelector('.brief-title');
+            if (!titleEl) return;
+
+            const titleText = titleEl.textContent;
+            let missionNum = 0;
+
+            if (titleText.includes('1')) missionNum = 1;
+            else if (titleText.includes('2')) missionNum = 2;
+            else if (titleText.includes('3')) missionNum = 3;
+
+            if (missionNum === 0) return;
+
+            if (this.completed.has(missionNum)) {
+                // Tamamlandı göster
+                card.classList.remove('locked');
+                card.classList.add('done');
+                const tag = card.querySelector('.tag');
+                if (tag) {
+                    tag.textContent = 'TAMAMLANDI';
+                    tag.className = 'tag tag-green';
+                }
+            } else if (missionNum > 1 && !this.completed.has(missionNum - 1)) {
+                // Kilitli göster
+                card.classList.add('locked');
+                const tag = card.querySelector('.tag');
+                if (tag) {
+                    tag.textContent = 'KİLİTLİ';
+                    tag.className = 'tag tag-purple';
+                }
+            } else {
+                // Açık, tamamlanmamış
+                card.classList.remove('locked', 'done');
+            }
         });
     },
 
@@ -120,6 +228,22 @@ const missions = {
             feedbackEl.className = 'mission-feedback mono-text text-green';
             app.log(`Görev ${this.currentMission} başarıyla tamamlandı.`, 'ok');
 
+            // Tamamlananı kaydet
+            this.completed.add(this.currentMission);
+            this._saveProgress();
+            this._updateBadge();
+
+            // Sidebar'da tamamlananı işaretle
+            const doneItem = document.querySelector(`.mission-sidebar .mission-list-item[data-mission="${this.currentMission}"]`);
+            if (doneItem) {
+                doneItem.classList.add('completed');
+                const doneIcon = doneItem.querySelector('i');
+                if (doneIcon) doneIcon.className = 'fa-solid fa-check text-green';
+            }
+
+            // Dashboard kartlarını senkronize et
+            this.syncDashboardCards();
+
             if (this.currentMission < 3) {
                 const nextMission = this.currentMission + 1;
                 // Bir sonraki görevin kilidini aç
@@ -129,30 +253,45 @@ const missions = {
                     const icon = sidebarItem.querySelector('i');
                     if (icon) icon.className = 'fa-solid fa-unlock text-cyan';
                 }
-                
+
                 // 1.5 saniye sonra geçiş yap
                 setTimeout(() => {
                     this.selectMission(nextMission);
                 }, 1500);
             } else {
-                // Tün görevler bittiğinde siber kutlama logları bas
+                // Tüm görevler bitti — kutlama
                 app.log('--- PROTOKOL TAMAMLANDI ---', 'warn');
                 app.log('SİSTEM ERİŞİMİ ONAYLANDI. TÜM DOSYALAR ELE GEÇİRİLDİ.', 'ok');
                 app.log('Hoşçakalın Ajan... Sistem sonlandırılıyor.', 'info');
-                
-                playground = document.getElementById('mission-playground');
-                playground.innerHTML = `
-                    <div class="flex-col gap-1 align-center text-center" style="animation: pulse 1s infinite alternate;">
-                        <h3 class="text-green font-display" style="font-size: 1.5rem;">ACCESS GRANTED</h3>
-                        <p class="text-green mono-text">Tebrikler Ajan! Tüm siber görevleri başarıyla tamamladın.</p>
-                    </div>
-                `;
+
+                // BUG FIX: let ile yeniden atanabilir değişken kullan
+                const completedPlayground = document.getElementById('mission-playground');
+                if (completedPlayground) {
+                    completedPlayground.innerHTML = `
+                        <div class="flex-col gap-1 align-center text-center" style="animation: pulse 1s infinite alternate;">
+                            <h3 class="text-green font-display" style="font-size: 1.5rem;">ACCESS GRANTED</h3>
+                            <p class="text-green mono-text">Tebrikler Ajan! Tüm siber görevleri başarıyla tamamladın.</p>
+                            <button class="btn btn-sm btn-green" id="btn-reset-missions">
+                                <i class="fa-solid fa-rotate"></i> Sıfırla & Tekrar Oyna
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('btn-reset-missions')?.addEventListener('click', () => {
+                        this.resetProgress();
+                    });
+                }
             }
         } else {
             feedbackEl.textContent = 'YANLIŞ CEVAP. Lütfen şifreleri tekrar kontrol edin.';
             feedbackEl.className = 'mission-feedback mono-text text-red';
             app.log(`Görev ${this.currentMission} başarısız giriş denemesi: "${val}"`, 'error');
         }
+    },
+
+    resetProgress() {
+        try { localStorage.removeItem('sp_completed'); } catch(e) {}
+        app.log('Görev ilerlemesi sıfırlandı. Sayfa yenileniyor...', 'warn');
+        setTimeout(() => location.reload(), 800);
     },
 
     /* ==========================================
