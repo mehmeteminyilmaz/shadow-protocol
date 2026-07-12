@@ -14,7 +14,8 @@ const missions = {
     answers: {
         1: 'AGENT_PASSCODE_777',
         2: '41.1082,29.0284',
-        3: 'SHADOW_PROTOCOL'
+        3: 'SHADOW_PROTOCOL',
+        4: 'SECURE_PORT'
     },
 
     /* ------------------------------------------
@@ -100,7 +101,7 @@ const missions = {
     _updateBadge() {
         const badge = document.getElementById('mission-badge');
         if (badge) {
-            const remaining = 3 - this.completed.size;
+            const remaining = 4 - this.completed.size;
             badge.textContent = remaining;
             if (remaining === 0) badge.style.display = 'none';
         }
@@ -122,6 +123,7 @@ const missions = {
             if (titleText.includes('1')) missionNum = 1;
             else if (titleText.includes('2')) missionNum = 2;
             else if (titleText.includes('3')) missionNum = 3;
+            else if (titleText.includes('4')) missionNum = 4;
 
             if (missionNum === 0) return;
 
@@ -212,6 +214,16 @@ const missions = {
                     <p class="text-muted" style="font-size: 0.82rem;">İpucu: Caesar Şifre Çözücü kullanın (Shift: 7)</p>
                 </div>
             `;
+        } else if (this.currentMission === 4) {
+            if (titleEl) titleEl.textContent = 'GÖREV 4: Network Hunt (Ağ Avı)';
+            if (descEl) descEl.textContent = 'Siber sunucunun trafik kayıtlarında şifrelenmiş bir paket yakaladık. Veriler XOR algoritması ile korunuyor. Trafikten elde ettiğimiz şifreli metin "n|zlk|fivkm" ve XOR anahtar karakteri "9". Şifre Motoru sekmesine gidip XOR paneli aracılığıyla bu metni çöz ve orijinal erişim parolasını buraya yaz.';
+
+            playground.innerHTML = `
+                <div class="flex-col gap-1 align-center text-center">
+                    <p class="text-purple mono-text"><i class="fa-solid fa-network-wired"></i> ŞİFRELİ VERİ: "n|zlk|fivkm"</p>
+                    <p class="text-muted" style="font-size: 0.82rem;">İpucu: XOR Şifre Çözücü kullanın (Anahtar: 9)</p>
+                </div>
+            `;
         }
     },
 
@@ -244,7 +256,7 @@ const missions = {
             // Dashboard kartlarını senkronize et
             this.syncDashboardCards();
 
-            if (this.currentMission < 3) {
+            if (this.currentMission < 4) {
                 const nextMission = this.currentMission + 1;
                 // Bir sonraki görevin kilidini aç
                 const sidebarItem = document.querySelector(`.mission-sidebar .mission-list-item[data-mission="${nextMission}"]`);

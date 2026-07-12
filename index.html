@@ -72,7 +72,7 @@
                 <button id="nav-mission-control" class="nav-btn" data-tab="mission-control" aria-selected="false">
                     <i class="fa-solid fa-user-secret"></i>
                     <span>GÖREV ODASI</span>
-                    <span class="badge" id="mission-badge">3</span>
+                    <span class="badge" id="mission-badge">4</span>
                 </button>
             </nav>
 
@@ -132,9 +132,19 @@
                                     <p class="brief-desc">Ele geçirilen ses dosyasına gizlenmiş mesajı çöz.</p>
                                     <span class="tag tag-cyan">BAŞLANGIÇ</span>
                                 </div>
-                                <div class="mission-brief-card locked">
+                                <div class="mission-brief-card locked" onclick="app.switchTab('mission-control')">
                                     <div class="brief-title">GÖREV 2: FİRARİ AJAN</div>
                                     <p class="brief-desc">Fotoğraf piksellerine gömülen koordinatları tespit et.</p>
+                                    <span class="tag tag-purple">KİLİTLİ</span>
+                                </div>
+                                <div class="mission-brief-card locked" onclick="app.switchTab('mission-control')">
+                                    <div class="brief-title">GÖREV 3: SON ŞİFRE</div>
+                                    <p class="brief-desc">Caesar Şifre Motoru yardımıyla son protokolü kır.</p>
+                                    <span class="tag tag-purple">KİLİTLİ</span>
+                                </div>
+                                <div class="mission-brief-card locked" onclick="app.switchTab('mission-control')">
+                                    <div class="brief-title">GÖREV 4: AĞ AVI</div>
+                                    <p class="brief-desc">XOR Şifre Motoru ile ağ trafiğindeki gizli metni çöz.</p>
                                     <span class="tag tag-purple">KİLİTLİ</span>
                                 </div>
                             </div>
@@ -470,6 +480,10 @@
                                 <div class="mission-list-item locked" data-mission="3">
                                     <i class="fa-solid fa-lock text-muted"></i>
                                     <span>GÖREV 3: Final Key</span>
+                                </div>
+                                <div class="mission-list-item locked" data-mission="4">
+                                    <i class="fa-solid fa-lock text-muted"></i>
+                                    <span>GÖREV 4: Network Hunt</span>
                                 </div>
                             </div>
                         </div>

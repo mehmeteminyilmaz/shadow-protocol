@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 ```
 ███████╗██╗  ██╗ █████╗ ██████╗  ██████╗ ██╗    ██╗
@@ -87,12 +87,13 @@ Modern web API'lerini (Canvas API, Web Audio API) ve hafif bir Node.js backend'i
 | **XOR Cipher** | Bit düzeyinde işlemleri 8-bit binary akış panelinde karakter karakter görselleştirme |
 
 ### 🕵️ Görev Odası (Mission Control)
-3 aşamalı, birbirini kilidini açan interaktif siber görev modu:
+3 aşamalı yerine artık 4 aşamalı, birbirini açan interaktif siber görev modu:
 
 ```
-GÖREV 1 → The Leak       → Sızdırılmış ses dosyasındaki şifreli mesajı çöz
-GÖREV 2 → Thermal Intel  → Uydu görüntüsüne gömülü kaçış koordinatlarını bul
+GÖREV 1 → The Leak       → Ses dosyasına gizlenmiş mesajı çöz
+GÖREV 2 → Thermal Intel  → Fotoğraftaki kaçış koordinatlarını bul
 GÖREV 3 → Final Key      → Caesar şifresiyle gizlenmiş son protokol kodunu kır
+GÖREV 4 → Network Hunt   → XOR şifresiyle gizlenmiş ağ trafiği parolasını kır
 ```
 
 | Özellik | Açıklama |
@@ -247,13 +248,12 @@ shadow-protocol/
 - [x] Ses LSB Steganografisi — WAV encode + AES-256
 - [x] Ses LSB Decode + AES-256 çözme
 - [x] Gerçek zamanlı spektrogram vizörü (rolling canvas)
-- [x] 3 aşamalı görev modu — kilit sistemi + programatik dosya üretimi
+- [x] 4 aşamalı görev modu — kilit sistemi + programatik dosya üretimi
 - [x] localStorage ile görev ilerlemesi kalıcılığı
 - [x] Görev tamamlandıkça dashboard senkronizasyonu
 - [x] Gemini AI asistan — çift mod bağlantı + kapsam kısıtlaması
-- [ ] GitHub Pages canlı yayın (sunucusuz sürüm)
-- [ ] Ek görev senaryoları (GÖREV 4+)
-- [ ] Çoklu dil desteği (TR / EN)
+- [x] GitHub Pages canlı yayın (sunucusuz sürüm)
+- [x] Ek görev senaryoları (GÖREV 4+)
 
 ---
 
