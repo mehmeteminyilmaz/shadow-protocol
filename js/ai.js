@@ -14,17 +14,16 @@ const ai = {
         const btnSend = document.getElementById('btn-send-ai-msg');
         const inputMsg = document.getElementById('ai-chat-input');
 
-        if (!inputKey) return;
-
-        // API anahtarını yerel depolamadan yükle
+        // Yerel depolamadan anahtarı yükle (varsa ve UI elementi mevcutsa)
         this.apiKey = localStorage.getItem('gemini_api_key') || '';
-        if (this.apiKey) {
+        if (this.apiKey && inputKey) {
             inputKey.value = this.apiKey;
             app.log('AI: Yerel Gemini API anahtarı yüklendi.', 'ok');
         }
 
-        // Kaydet butonu tetikleyici
+        // Kaydet butonu tetikleyicisi (yalnızca arayüz elementi varsa)
         btnSave?.addEventListener('click', () => {
+            if (!inputKey) return;
             const keyVal = inputKey.value.trim();
             if (keyVal) {
                 localStorage.setItem('gemini_api_key', keyVal);
