@@ -190,21 +190,38 @@ const app = {
         this._drawGauge(cpuCanvas, this._cpu, '#00f0ff');
         this._drawGauge(ramCanvas, this._ram, '#bd00ff');
 
-        // Her saniye küçük dalgalanmalar ekle
-        setInterval(() => {
+        const cpuVal = document.getElementById('cpu-val');
+        const ramVal = document.getElementById('ram-val');
+
+        // Her 2 saniyede bir sunucudan gerçek değerleri çek, hata durumunda simülasyona geç (Fallback)
+        setInterval(async () => {
             if (this.activeTab !== 'control-deck') return;
 
-            this._cpu = this._clamp(this._cpu + (Math.random() - 0.5) * 9, 8, 96);
-            this._ram = this._clamp(this._ram + (Math.random() - 0.5) * 4, 40, 88);
+            let fetched = false;
+
+            try {
+                const response = await fetch('/api/system-stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    this._cpu = data.cpu;
+                    this._ram = data.ram;
+                    fetched = true;
+                }
+            } catch (err) {
+                // Sunucu kapalı veya ulaşılamazsa sessizce simülasyona düşer
+            }
+
+            if (!fetched) {
+                this._cpu = this._clamp(this._cpu + (Math.random() - 0.5) * 9, 8, 96);
+                this._ram = this._clamp(this._ram + (Math.random() - 0.5) * 4, 40, 88);
+            }
 
             this._drawGauge(cpuCanvas, this._cpu, '#00f0ff');
             this._drawGauge(ramCanvas, this._ram, '#bd00ff');
 
-            const cpuVal = document.getElementById('cpu-val');
-            const ramVal = document.getElementById('ram-val');
             if (cpuVal) cpuVal.textContent = `${Math.round(this._cpu)}%`;
             if (ramVal) ramVal.textContent = `${Math.round(this._ram)}%`;
-        }, 1000);
+        }, 2000);
     },
 
     /**

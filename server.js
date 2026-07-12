@@ -5,12 +5,12 @@
              istekleri Gemini'ye yönlendirir,
              statik dosyaları port 3000'de sunar.
    ============================================ */
-
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const http = require('https');
 const path = require('path');
+const os = require('os');
 
 // .env dosyasından ayarları yükle
 dotenv.config();
@@ -78,6 +78,48 @@ app.post('/api/chat', (req, res) => {
 
     proxyReq.write(postData);
     proxyReq.end();
+// CPU Yükünü Hesaplama Yardımcı Fonksiyonları
+function getCPUInfo() {
+    const cpus = os.cpus();
+    let user = 0, nice = 0, sys = 0, idle = 0, irq = 0;
+    for (const cpu of cpus) {
+        user += cpu.times.user;
+        nice += cpu.times.nice;
+        sys += cpu.times.sys;
+        idle += cpu.times.idle;
+        irq += cpu.times.irq;
+    }
+    const total = user + nice + sys + idle + irq;
+    return { idle, total };
+}
+
+function getCPUUsage(callback) {
+    const stats1 = getCPUInfo();
+    setTimeout(() => {
+        const stats2 = getCPUInfo();
+        const idleDiff = stats2.idle - stats1.idle;
+        const totalDiff = stats2.total - stats1.total;
+        if (totalDiff === 0) {
+            callback(0);
+        } else {
+            const percentage = 100 - Math.floor((100 * idleDiff) / totalDiff);
+            callback(percentage);
+        }
+    }, 200);
+}
+
+// Canlı CPU & RAM Bilgisi Sağlayan Rota
+app.get('/api/system-stats', (req, res) => {
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const ramUsage = Math.round(((totalMem - freeMem) / totalMem) * 100);
+
+    getCPUUsage((cpuUsage) => {
+        res.json({
+            cpu: cpuUsage,
+            ram: ramUsage
+        });
+    });
 });
 
 // Bilinmeyen rotaları index.html'e yönlendir (SPA yapısı)
